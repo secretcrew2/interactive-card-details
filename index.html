@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&display=swap" rel="stylesheet">
+
+  <title>Frontend Mentor | Interactive card details form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            clifford: '#da373d',
+            grayishViolet400: 'hsl(270, 3%, 87%)',
+            grayishViolet500: 'hsl(279, 6%, 55%)',
+            grayishViolet600: 'hsl(278, 68%, 11%)'
+          },
+          fontFamily:{
+            sans: ['Space Grotesk', 'sans-serif'],
+          },
+          backgroundImage:{
+            focusInput: "linear-gradient(hsl(249, 99%, 64%), hsl(278, 94%, 30%))"
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+  <style>
+    .attribution { font-size: 11px; text-align: center; }
+    .attribution a { color: hsl(228, 45%, 44%); }
+  </style>
+  <style>
+    input:focus{
+      background: linear-gradient(#fff, #fff) padding-box, linear-gradient(hsl(249, 99%, 64%), hsl(278, 94%, 30%)) border-box;
+      border: 1px solid transparent;
+    }
+  </style>
+</head>
+<body>
+  <main class="min-h-screen md:grid md:grid-cols-2 gap-8">
+    <!--card section-->
+    <div class="bg-[url('images/bg-main-mobile.png')] bg-no-repeat bg-[length:100%_16rem] md:bg-[url('images/bg-main-desktop.png')] md:bg-[length:26rem_100%] -mb-20 md:mb-0 md:flex md:justify-end">
+        <!--card container-->
+        <div class="max-w-md mx-auto md:mx-0 p-4 flex flex-col md:flex-col-reverse md:max-w-lg md:flex-1 md:justify-center">
+            <!--back card-->
+            <div class="relative max-w-[18rem] md:max-w-sm self-end mt-8">
+                <img src="images/bg-card-back.png" alt="">
+                <div class="absolute top-0 bottom-0 left-0 right-0 p-8 flex justify-end items-center">
+                    <p class="pr-2 text-white text-sm">
+                        {{ cardCvc() }}
+                    </p>
+                </div>
+            </div>
+            <!--front card-->
+            <div class="relative max-w-[18rem] md:max-w-sm self-start -translate-y-[69px] md:translate-y-0">
+                <img src="images/bg-card-front.png" alt="">
+                <div class="absolute top-0 left-0 right-0 bottom-0 p-4 flex flex-col justify-between">
+                    <!--circle-->
+                    <div class="flex items-center gap-2">
+                        <div class="p-[15px] bg-white rounded-full inline-block">
+                        </div>
+                        <div class="p-[5px] bg-transparent border-[1px] border-solid border-white rounded-full inline-block">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-white tracking-[0.05em] text-xl">
+                            {{ cardNumber() }}
+                        </p>
+                        <div class="flex justify-between">
+                            <p class="text-xs text-white uppercase opacity-80">
+                                {{ cardName() }}
+                            </p>
+                            <p class="text-xs text-white uppercase opacity-80">
+                                {{ cardMonth() }}/{{ cardYear() }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--card details-->
+    <div class="p-8 md:my-auto">
+        <!--card details container-->
+        <div class="max-w-md mx-auto md:mx-0">     
+            <!--cardholder name-->
+            <label for="" class="block text-sm uppercase mb-2 text-grayishViolet600">Cardholder Name</label>
+            <input id="test" v-model="cardname" class="focus:outline-none block w-full mb-4 text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" id="" placeholder="e.g Jane Appleseed">
+            
+            <!--card number-->
+            <label for="" class="block text-sm uppercase mb-2">Cardnumber</label>
+            <input v-model="cardnumber" v-maska data-maska="#### #### #### ####" class="focus:outline-none block w-full mb-4 text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="19" placeholder="e.g 1234 5678 9123 0000">
+            <div class="flex gap-3">
+                <div class="w-1/2">
+                    <!--MM/YY-->
+                  <label for="" class="text-sm uppercase mb-2 block">Exp. Date (MM/YY)</label>
+                  <div class="flex gap-2">
+                    <input v-model="cardmonth" class="focus:outline-none mb-4 text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="MM" class="w-full">
+                    <input v-model="cardyear" class="focus:outline-none mb-4 text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="YY" class="w-full">
+                  </div>
+                </div>
+                <div class="w-1/2">
+                    <!--CVC-->
+                  <label for="" class="text-sm uppercase mb-2 block">CVC</label>
+                  <input v-model="cardcvc" class="focus:outline-none mb-4 text-sm w-full p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="3" placeholder="e.g 123">
+                </div>
+            </div>
+            <button class="block w-full p-3 bg-grayishViolet600 text-white text-opacity-80 rounded-lg text-sm">Confirm</button>
+        </div>
+    </div>
+
+  </main>
+  
+  
+  <div class="attribution">
+    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+    Coded by <a href="#">Your Name Here</a>.
+  </div>
+
+</body>
+</html>
