@@ -19,7 +19,8 @@
             clifford: '#da373d',
             grayishViolet400: 'hsl(270, 3%, 87%)',
             grayishViolet500: 'hsl(279, 6%, 55%)',
-            grayishViolet600: 'hsl(278, 68%, 11%)'
+            grayishViolet600: 'hsl(278, 68%, 11%)',
+            tomato: 'hsl(0, 100%, 66%)'
           },
           fontFamily:{
             sans: ['Space Grotesk', 'sans-serif'],
@@ -43,8 +44,9 @@
       border: 1px solid transparent;
     }
   </style>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
-<body>
+<body id="app">
   <main class="min-h-screen md:grid md:grid-cols-2 gap-8">
     <!--card section-->
     <div class="bg-[url('images/bg-main-mobile.png')] bg-no-repeat bg-[length:100%_16rem] md:bg-[url('images/bg-main-desktop.png')] md:bg-[length:26rem_100%] -mb-20 md:mb-0 md:flex md:justify-end">
@@ -55,7 +57,7 @@
                 <img src="images/bg-card-back.png" alt="">
                 <div class="absolute top-0 bottom-0 left-0 right-0 p-8 flex justify-end items-center">
                     <p class="pr-2 text-white text-sm">
-                        {{ cardCvc() }}
+                        000
                     </p>
                 </div>
             </div>
@@ -72,14 +74,14 @@
                     </div>
                     <div class="space-y-2">
                         <p class="text-white tracking-[0.05em] text-xl">
-                            {{ cardNumber() }}
+                            {{cardNumber()}}
                         </p>
                         <div class="flex justify-between">
                             <p class="text-xs text-white uppercase opacity-80">
-                                {{ cardName() }}
+                                {{cardName()}}
                             </p>
                             <p class="text-xs text-white uppercase opacity-80">
-                                {{ cardMonth() }}/{{ cardYear() }}
+                                00
                             </p>
                         </div>
                     </div>
@@ -92,25 +94,38 @@
         <!--card details container-->
         <div class="max-w-md mx-auto md:mx-0">     
             <!--cardholder name-->
-            <label for="" class="block text-sm uppercase mb-2 text-grayishViolet600">Cardholder Name</label>
-            <input id="test" v-model="cardname" class="focus:outline-none block w-full mb-4 text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" id="" placeholder="e.g Jane Appleseed">
+            <div class="mb-4">
+              <label for="" class=" block text-sm uppercase mb-2 text-grayishViolet600">Cardholder Name</label>
+              <input id="test" v-model="cardname" @focusout="showWarning('cardname')" @focusin="warningName = false" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" id="" placeholder="e.g Jane Appleseed">
+              <p class="text-xs text-tomato mt-2" :class="{hidden: !warningName}">Can't be blank</p>
+            </div>
             
+
             <!--card number-->
-            <label for="" class="block text-sm uppercase mb-2">Cardnumber</label>
-            <input v-model="cardnumber" v-maska data-maska="#### #### #### ####" class="focus:outline-none block w-full mb-4 text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="19" placeholder="e.g 1234 5678 9123 0000">
+            <div class="mb-4">
+              <label for="" class="block text-sm uppercase mb-2">Cardnumber</label>
+              <input v-model="cardnumber" @keyup="cardNumber" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="20" placeholder="e.g 1234 5678 9123 0000">
+              <p class="text-xs text-tomato mt-2">Can't be blank</p>
+            </div>
             <div class="flex gap-3">
                 <div class="w-1/2">
                     <!--MM/YY-->
-                  <label for="" class="text-sm uppercase mb-2 block">Exp. Date (MM/YY)</label>
-                  <div class="flex gap-2">
-                    <input v-model="cardmonth" class="focus:outline-none mb-4 text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="MM" class="w-full">
-                    <input v-model="cardyear" class="focus:outline-none mb-4 text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="YY" class="w-full">
+                  <div class="mb-4">
+                    <label for="" class="text-sm uppercase mb-2 block">Exp. Date (MM/YY)</label>
+                    <div class="flex gap-2">
+                      <input v-model="cardmonth" class="focus:outline-none text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="MM" class="w-full">
+                      <input v-model="cardyear" class="focus:outline-none text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="YY" class="w-full">
+                    </div>
+                    <p class="text-xs text-tomato mt-2">Can't be blank</p>
                   </div>
                 </div>
                 <div class="w-1/2">
                     <!--CVC-->
-                  <label for="" class="text-sm uppercase mb-2 block">CVC</label>
-                  <input v-model="cardcvc" class="focus:outline-none mb-4 text-sm w-full p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="3" placeholder="e.g 123">
+                  <div class="mb-4">
+                    <label for="" class="text-sm uppercase mb-2 block">CVC</label>
+                    <input v-model="cardcvc" class="focus:outline-none text-sm w-full p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="3" placeholder="e.g 123">
+                    <p class="text-xs text-tomato mt-2">Can't be blank</p>
+                  </div>
                 </div>
             </div>
             <button class="block w-full p-3 bg-grayishViolet600 text-white text-opacity-80 rounded-lg text-sm">Confirm</button>
@@ -124,6 +139,53 @@
     Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
     Coded by <a href="#">Your Name Here</a>.
   </div>
-
+  <script>
+    const app = Vue.createApp({
+      data(){
+        return {
+          cardname:'',
+          cardnumber: '',
+          cardmonth: '',
+          warningName: false,
+        }
+      },
+      methods: {
+        showWarning(type){
+          if(type === 'cardname'){
+            if(!this.cardname){
+              this.warningName = true;
+            }
+          }
+        },
+        cardName(){
+          return !this.cardname ? 'Jane Appleseed' : this.cardname
+        },
+        cardNumber(){
+          if(!this.cardnumber){
+            return '0000 0000 0000 0000'
+          } else {
+            let number = this.cardnumber.replace(/\s/g, "");
+            let newNumber = '';
+            for(let i =0; i< number.length; i++){
+              if(i%4 == 0){
+                newNumber += ' ';
+              }
+              newNumber += number[i];
+            }
+            this.cardnumber = newNumber;
+            return this.cardnumber
+          }
+        },
+        cardMonth(){
+          if(!this.cardmonth){
+            return 00
+          } else {
+            
+          }
+        }
+      }
+    })
+    app.mount('#app')
+  </script>
 </body>
 </html>
