@@ -105,7 +105,7 @@
             <div class="mb-4">
               <label for="" class="block text-sm uppercase mb-2">Cardnumber</label>
               <input v-model="cardnumber" @keyup="cardNumber" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="20" placeholder="e.g 1234 5678 9123 0000">
-              <p class="text-xs text-tomato mt-2">Can't be blank</p>
+              <p class="text-xs text-tomato mt-2"> {{textMessage}} </p>
             </div>
             <div class="flex gap-3">
                 <div class="w-1/2">
@@ -147,6 +147,7 @@
           cardnumber: '',
           cardmonth: '',
           warningName: false,
+          textMessage: 's',
         }
       },
       methods: {
@@ -164,6 +165,14 @@
           if(!this.cardnumber){
             return '0000 0000 0000 0000'
           } else {
+            if(isNaN(this.cardnumber.replace(/\s/g, "").toString())){
+              console.log('yes')
+              this.textMessage = 'Wrong format, numbers only'
+            } else {
+              this.textMessage = 'dsada'
+            }
+            console.log('no')
+            
             let number = this.cardnumber.replace(/\s/g, "");
             let newNumber = '';
             for(let i =0; i< number.length; i++){
