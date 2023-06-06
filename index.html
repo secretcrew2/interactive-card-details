@@ -49,39 +49,39 @@
 <body id="app">
   <main class="min-h-screen md:grid md:grid-cols-2 gap-8">
     <!--card section-->
-    <div class="bg-[url('images/bg-main-mobile.png')] bg-no-repeat bg-[length:100%_16rem] md:bg-[url('images/bg-main-desktop.png')] md:bg-[length:26rem_100%] -mb-20 md:mb-0 md:flex md:justify-end">
+    <div class="bg-[url('images/bg-main-mobile.png')] bg-no-repeat bg-[length:100%_16rem] md:bg-[url('images/bg-main-desktop.png')] md:bg-[length:26rem_100%] -mb-20 md:mb-0 md:flex md:justify-center">
         <!--card container-->
         <div class="max-w-md mx-auto md:mx-0 p-4 flex flex-col md:flex-col-reverse md:max-w-lg md:flex-1 md:justify-center">
             <!--back card-->
-            <div class="relative max-w-[18rem] md:max-w-sm self-end mt-8">
+            <div class="relative max-w-[18rem] md:max-w-[22rem] self-end mt-8">
                 <img src="images/bg-card-back.png" alt="">
                 <div class="absolute top-0 bottom-0 left-0 right-0 p-8 flex justify-end items-center">
-                    <p class="pr-2 text-white text-sm">
-                        000
+                    <p class="pr-2 text-white text-sm md:text-lg">
+                        {{cardCvc()}}
                     </p>
                 </div>
             </div>
             <!--front card-->
-            <div class="relative max-w-[18rem] md:max-w-sm self-start -translate-y-[69px] md:translate-y-0">
+            <div class="relative max-w-[18rem] md:max-w-[22rem] self-start -translate-y-[69px] md:translate-y-0">
                 <img src="images/bg-card-front.png" alt="">
-                <div class="absolute top-0 left-0 right-0 bottom-0 p-4 flex flex-col justify-between">
+                <div class="absolute top-0 left-0 right-0 bottom-0 p-4 md:p-5 flex flex-col justify-between">
                     <!--circle-->
                     <div class="flex items-center gap-2">
-                        <div class="p-[15px] bg-white rounded-full inline-block">
+                        <div class="p-[15px] md:p-5 bg-white rounded-full inline-block">
                         </div>
-                        <div class="p-[5px] bg-transparent border-[1px] border-solid border-white rounded-full inline-block">
+                        <div class="p-[5px] md:p-2 bg-transparent border-[1px] border-solid border-white rounded-full inline-block">
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-white tracking-[0.05em] text-xl">
+                        <p class="text-white tracking-[0.05em] text-xl md:text-2xl">
                             {{cardNumber()}}
                         </p>
                         <div class="flex justify-between">
-                            <p class="text-xs text-white uppercase opacity-80">
+                            <p class="text-xs text-white uppercase opacity-80 md:text-sm">
                                 {{cardName()}}
                             </p>
-                            <p class="text-xs text-white uppercase opacity-80">
-                                00
+                            <p class="text-xs text-white uppercase opacity-80 md:text-sm">
+                                {{cardMonth()}}/{{cardYear()}}
                             </p>
                         </div>
                     </div>
@@ -90,22 +90,22 @@
         </div>
     </div>
     <!--card details-->
-    <div class="p-8 md:my-auto">
+    <div v-if="!success" class="p-8 md:my-auto">
         <!--card details container-->
         <div class="max-w-md mx-auto md:mx-0">     
             <!--cardholder name-->
             <div class="mb-4">
               <label for="" class=" block text-sm uppercase mb-2 text-grayishViolet600">Cardholder Name</label>
-              <input id="test" v-model="cardname" @focusout="showWarning('cardname')" @focusin="warningName = false" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" id="" placeholder="e.g Jane Appleseed">
-              <p class="text-xs text-tomato mt-2" :class="{hidden: !warningName}">Can't be blank</p>
+              <input id="name" v-model="cardname" @focusout="isEmpty" @keyup="notComplete = false" @keyup="isEmpty" :class="{['focus:bg-none focus:border-solid focus:border-[1px] focus:border-tomato border-tomato']: warning['name'].validity || notComplete }" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" id="" placeholder="e.g Jane Appleseed">
+              <p class="text-xs text-tomato mt-2" :class="{hidden: !warning['name'].validity}"> {{ warning['name'].text }} </p>
             </div>
             
 
             <!--card number-->
             <div class="mb-4">
               <label for="" class="block text-sm uppercase mb-2">Cardnumber</label>
-              <input v-model="cardnumber" @keyup="cardNumber" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="20" placeholder="e.g 1234 5678 9123 0000">
-              <p class="text-xs text-tomato mt-2"> {{textMessage}} </p>
+              <input id="number" v-model="cardnumber" @focusout="isEmpty" @keyup="notComplete = false" @keyup="isEmpty" @keyup="cardNumber" :class="{['focus:bg-none focus:border-solid focus:border-[1px] focus:border-tomato border-tomato']: warning['number'].validity || notComplete }" class="focus:outline-none block w-full text-sm p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="20" placeholder="e.g 1234 5678 9123 0000">
+              <p class="text-xs text-tomato mt-2" :class="{hidden: !warning['number'].validity}"> {{warning['number'].text}} </p>
             </div>
             <div class="flex gap-3">
                 <div class="w-1/2">
@@ -113,23 +113,33 @@
                   <div class="mb-4">
                     <label for="" class="text-sm uppercase mb-2 block">Exp. Date (MM/YY)</label>
                     <div class="flex gap-2">
-                      <input v-model="cardmonth" class="focus:outline-none text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="MM" class="w-full">
-                      <input v-model="cardyear" class="focus:outline-none text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="YY" class="w-full">
+                      <input id="month" v-model="cardmonth" @focusout="isEmpty" @keyup="notComplete = false" @keyup="isEmpty" :class="{['focus:bg-none focus:border-solid focus:border-[1px] focus:border-tomato border-tomato']: warning['month'].validity || notComplete}" class="focus:outline-none text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="MM" class="w-full">
+                      <input id="year" v-model="cardyear" @focusout="isEmpty" @keyup="notComplete = false" @keyup="isEmpty" :class="{['focus:bg-none focus:border-solid focus:border-[1px] focus:border-tomato border-tomato']: warning['year'].validity || notComplete }" class="focus:outline-none text-sm w-1/2 p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="2" placeholder="YY" class="w-full">
                     </div>
-                    <p class="text-xs text-tomato mt-2">Can't be blank</p>
+                    <p class="text-xs text-tomato mt-2" :class="{hidden: !warning['month'].validity && !warning['year'].validity}"> {{warning['month'].text}}  </p>
                   </div>
                 </div>
                 <div class="w-1/2">
                     <!--CVC-->
                   <div class="mb-4">
                     <label for="" class="text-sm uppercase mb-2 block">CVC</label>
-                    <input v-model="cardcvc" class="focus:outline-none text-sm w-full p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="3" placeholder="e.g 123">
-                    <p class="text-xs text-tomato mt-2">Can't be blank</p>
+                    <input id="cvc" v-model="cardcvc" @focusout="isEmpty" @keyup="notComplete = false" @keyup="isEmpty" :class="{['focus:bg-none focus:border-solid focus:border-[1px] focus:border-tomato border-tomato']: warning['cvc'].validity || notComplete }" class="focus:outline-none text-sm w-full p-3 border-[1px] border-solid border-grayishViolet400 rounded-lg" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="3" placeholder="e.g 123">
+                    <p class="text-xs text-tomato mt-2" :class="{hidden: !warning['cvc'].validity}"> {{ warning['cvc'].text }} </p>
                   </div>
                 </div>
             </div>
-            <button class="block w-full p-3 bg-grayishViolet600 text-white text-opacity-80 rounded-lg text-sm">Confirm</button>
+            <button class="block w-full p-3 bg-grayishViolet600 text-white text-opacity-80 rounded-lg text-sm" @click="success = isSuccess()">Confirm</button>
         </div>
+    </div>
+    <div v-else class="p-8 md:my-auto flex flex-col items-center space-y-8 max-w-md">
+      <div class="flex justify-center">
+        <img src="images/icon-complete.svg" alt="">
+      </div>
+      <div class="space-y-4 text-center">
+        <p class="text-2xl uppercase tracking-widest text-grayishViolet600">Thank You!</p>
+        <p class="text-grayishViolet500">We've added your card details</p>
+      </div>
+      <button class="block w-full p-3 bg-grayishViolet600 text-white text-opacity-80 rounded-lg text-sm" @click="refresh()">Continue</button>
     </div>
 
   </main>
@@ -146,18 +156,74 @@
           cardname:'',
           cardnumber: '',
           cardmonth: '',
-          warningName: false,
-          textMessage: 's',
+          cardyear:'',
+          cardcvc:'',
+          warning: {
+            name: {
+              validity: false,
+              text: 'dasdas'
+            },
+            number: {
+              validity: false,
+              text: ''
+            },
+            month: {
+              validity: false,
+              text: ''
+            },
+            year: {
+              validity: false,
+              text: ''
+            },
+            cvc: {
+              validity: false,
+              text: ''
+            }
+          },
+          textEmpty: "Can't be blank",
+          textFormat: "Wrong format, numbers only",
+          success: false,
+          notComplete: false, 
         }
       },
       methods: {
-        showWarning(type){
-          if(type === 'cardname'){
-            if(!this.cardname){
-              this.warningName = true;
+        refresh(){
+          window.location.reload()
+        },
+        isEmpty(e){
+          if(!e.target.value){
+            this.warning[e.target.id].text = this.textEmpty;
+            this.warning[e.target.id].validity = true;
+          } else {
+            if(e.target.id === 'name'){
+              this.warning[e.target.id].validity = false;
+            } else if(e.target.id === 'number'){
+              if(isNaN(e.target.value.replace(/\s/g, ""))){
+                this.warning[e.target.id].text = this.textFormat;
+                this.warning[e.target.id].validity = true;
+                
+              } else {
+                this.warning[e.target.id].validity = false;
+              }
+            } else {
+              if(isNaN(e.target.value)){
+                this.warning[e.target.id].text = this.textFormat;
+                this.warning[e.target.id].validity = true;
+                
+              } else {
+                this.warning[e.target.id].validity = false;
+              }
             }
+            
           }
         },
+        isSuccess(){
+          let isComplete = (this.cardname.length > 4 && this.cardnumber.replace(/\s/g, "").length === 16 && this.cardmonth.length === 2 && this.cardyear.length === 2 && this.cardcvc.length === 3)
+          let complete = Object.values(this.warning).map(property => property.validity).every(validity => validity === false) && isComplete;
+          this.notComplete = !complete;
+          return complete;
+        },
+        
         cardName(){
           return !this.cardname ? 'Jane Appleseed' : this.cardname
         },
@@ -165,14 +231,6 @@
           if(!this.cardnumber){
             return '0000 0000 0000 0000'
           } else {
-            if(isNaN(this.cardnumber.replace(/\s/g, "").toString())){
-              console.log('yes')
-              this.textMessage = 'Wrong format, numbers only'
-            } else {
-              this.textMessage = 'dsada'
-            }
-            console.log('no')
-            
             let number = this.cardnumber.replace(/\s/g, "");
             let newNumber = '';
             for(let i =0; i< number.length; i++){
@@ -186,12 +244,14 @@
           }
         },
         cardMonth(){
-          if(!this.cardmonth){
-            return 00
-          } else {
-            
-          }
-        }
+          return !this.cardmonth ? '00' : this.cardmonth
+        },
+        cardYear(){
+          return !this.cardyear ? '00' : this.cardyear
+        },
+        cardCvc(){
+          return !this.cardcvc ? '000' : this.cardcvc
+        },
       }
     })
     app.mount('#app')
